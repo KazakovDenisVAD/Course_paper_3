@@ -36,7 +36,7 @@ def format_operation(operation):
             f"{operation['operationAmount']['amount']} {operation['operationAmount']['currency']['name']}")
 
 
-def mask_card_number(card: str):
+def mask_card_number(card):
     """Маскировка цифр номера карты"""
     card = card.split(' ')
     card_number = card.pop()
@@ -61,8 +61,6 @@ def mask_account_number(account_number):
         masked_account_number = '**' + account_number[-4:]
         masked = parts[0] + ' ' + masked_account_number
         return masked
-    else:
-        return "No account number provided"
 
 
 def main():
