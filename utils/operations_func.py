@@ -36,28 +36,31 @@ def format_operation(operation):
             f"{operation['operationAmount']['amount']} {operation['operationAmount']['currency']['name']}")
 
 
-def mask_card_number(card_number):
+def mask_card_number(card):
     """Маскировка цифр номера карты"""
-    if len(card_number) >= 10:
-        first_six = card_number[:6]
-        last_four = card_number[-4:]
-        masked = first_six + '*' * (len(card_number) - 10) + last_four
-        return masked
-    else:
+    card = card.split(' ')
+    card_number = card.pop()
+    card_name = " ".join(card)
+    if card_name.lower() == "счет":
+        mask_card_account = "**" + card_number[-4:]
+        return f"{card_name} {mask_card_account}"
+    elif card_name.lower() == "":
         return "No card number provided"
+    else:
+        mask_card = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"
+        return f"{card_name} {mask_card}"
 
 
 def mask_account_number(account_number):
+    """Маскировка номера счета"""
     parts = account_number.split(' ', 1)
     if len(parts) != 2:
+        account_number = parts[1]
         return account_number
-    account_number = parts[1]
-    if len(account_number) < 6:
+    if len(account_number) > 6:
         masked_account_number = '**' + account_number[-4:]
         masked = parts[0] + ' ' + masked_account_number
         return masked
-    else:
-        return "No account number provided"
 
 
 def main():
