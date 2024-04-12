@@ -4,8 +4,7 @@ import pytest
 
 from utils import (
     sorted_and_executed_operations,
-    mask_account_number,
-    mask_card_number,
+    mask_credential,
     load_operations_data,
 )
 
@@ -15,8 +14,8 @@ def operations_data(tmp_path):
     file_path = tmp_path / "operations.json"
     CONTENT = [
         {
-            "from": "1234567890123456",
-            "to": "Счет 1234567890",
+            "from": "90424923579946435907",
+            "to": "Visa Platinum 1246377376343588",
             "state": "EXECUTED",
             "date": "2023-01-01T12:00:00.000",
             "operationAmount": {
@@ -35,14 +34,13 @@ def operations_data(tmp_path):
     return file_path
 
 
-def test_mask_card_number():
-    assert mask_card_number('Счет 123456789012345678901') == 'Счет **8901'
-    assert mask_card_number('') == 'No card number provided'
-    assert mask_card_number('Visa Classic 1234567890123456') == 'Visa Classic 1234 56** **** 3456'
+def test_mask_credential():
+    assert mask_credential('Счет 123456789012345678901') == 'Счет **8901'
+    assert mask_credential('') == ''
+    assert mask_credential('Visa Classic 1234567890123456') == 'Visa Classic 1234 56** **** 3456'
 
-
-def test_mask_account_number():
-    assert mask_account_number('Счет 123456789012345678901') == 'Счет **8901'
+    with pytest.raises(ValueError):
+        mask_credential('3428234')
 
 
 def test_load_operations_data(operations_data):

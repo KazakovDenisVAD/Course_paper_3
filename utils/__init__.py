@@ -4,4 +4,5 @@ from .operations_func import (
     format_operation,
     sorted_and_executed_operations,
     load_operations_data,
+    mask_credential,
 )
