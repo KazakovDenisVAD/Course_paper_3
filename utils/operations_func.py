@@ -1,5 +1,4 @@
 import json
-from collections.abc import Callable
 from copy import deepcopy
 from datetime import datetime
 
@@ -48,7 +47,7 @@ def format_operation(operation):
     )
 
 
-def mask_credential(credential: str) -> Callable[[list | str], str] | str:
+def mask_credential(credential: str) -> str:
     """Маскировка чувствительных данных о счете/карте"""
 
     CARD_SPLIT_SIZE = 4
@@ -56,6 +55,11 @@ def mask_credential(credential: str) -> Callable[[list | str], str] | str:
 
     if not credential:
         return credential
+
+    credential_name = " ".join([
+        name for name in credential.split()
+        if name.isalpha()
+    ])
 
     # Получим только числа из карты/счета
     credential_numbers: str = "".join(
@@ -70,10 +74,10 @@ def mask_credential(credential: str) -> Callable[[list | str], str] | str:
         credential_numbers: list[str] = [
            "".join(tpl) for tpl in list(zip(*[iter(credential_numbers)] * CARD_SPLIT_SIZE))
         ]
-        return mask_card_number(credential_numbers)
+        return f"{credential_name} {mask_card_number(credential_numbers)}"
 
     elif len(credential_numbers) > CARD_NUMBER_LEN:
-        return mask_account_number(credential_numbers)
+        return f"{credential_name} {mask_account_number(credential_numbers)}"
 
     raise ValueError(f"Непредвидимые данные карты/счета {credential_numbers}")
 
@@ -97,4 +101,4 @@ def mask_card_number(card: list[str]) -> str:
 def mask_account_number(account_number: str) -> str:
     """Маскировка номера счета"""
 
-    return f"Счет **{account_number[-4:]}"
+    return f"**{account_number[-4:]}"
